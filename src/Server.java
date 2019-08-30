@@ -22,8 +22,6 @@ public class Server {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-
         try {
             //Socket de servidor para esperar peticiones de la red
             ServerSocket serverSocket = new ServerSocket(PORT);
@@ -42,7 +40,7 @@ public class Server {
                 String request = input.readLine();
                 //System.out.println("Cliente> petición [" + request +  "]");
                 //se procesa la peticion y se espera resultado
-                String strOutput = decodificar(request);
+                String strOutput = decompress(request);
                 //Se imprime en consola "servidor"
                 System.out.println("Servidor> Resultado de petición");
                 System.out.println("Servidor> \"" + strOutput + "\"");
@@ -57,61 +55,18 @@ public class Server {
         }
     }
 
-    /**
-     * procesa peticion del cliente y retorna resultado
-     * @param request peticion del cliente
-     * @return String
-     */
-    public static String decodificar(String request/*debe recibir el array de bytes*/){
-        char [] letras = {'A','B','C','D','E','F','G','H'};
-        int [] codigos = {000,001,010,011,100,101,110,111};
 
+    private static String decompress(String compressedText) {
+        if (compressedText.length() <= 1) {
+            return compressedText;
+        }
 
-/*
-        String result="";
-        //frases
-        String[] phrases = {
-                "La tecnología se alimenta a si misma. La tecnología hace posible más tecnología.-Alvin Toffler.",
-                "La tecnología es sólo una herramienta. En términos de llevar a los niños a trabajar juntos y motivarlos, el profesor es el más importante.-Bill Gates.",
-                "La máquina tecnológicamente más eficiente que el hombre ha inventado es el libro.-Northrop Frye.",
-                "Ya no hacen más los bugs como bunny - Olav Mjelde",
-                "Un lenguaje de programación es de bajo nivel cuando requiere que prestes atencion a lo irrelevante.-Alan J. Perlis.",
-                "Hablar es barato. Enséñame el código.-Linus Torvalds ",
-                "No me importa si funciona en su máquina! No me envían su máquina!.-Vidiu Platon",
-                "Siempre codifica como si la persona que finalmente mantendrá tu código fuera un psicópata violento que sabe dónde vives.-Martin Golding"};
-        ArrayList<String> phrasesList = new ArrayList<>();
-        Collections.addAll(phrasesList, phrases);
-        //libros
-        String[] books = {
-                "Divina Comedia - Dante Alighieri",
-                "Don Quijote de la Mancha - Miguel de Cervantes",
-                "Cien años de soledad - Gabriel García Márquez",
-                "Moby Dick - Herman Melville",
-                "Ana Karenina - Lev Tolstói",
-                "Eneida - Virgilio",
-                "Otelo - William Shakespeare",
-                "El viejo y el mar - Ernest Hemingway",
-                "Orgullo y prejuicio - Jane Austen"};
-        ArrayList<String> booksList = new ArrayList<>();
-        Collections.addAll(booksList, books);
+        char c = compressedText.charAt(0);
 
-        if(request!=null) switch(request){
-            case "frase":
-                Collections.shuffle(phrasesList);
-                result = phrasesList.get(0);
-                break;
-            case "libro":
-                Collections.shuffle(booksList);
-                result = booksList.get(0);
-                break;
-            case "exit":
-                result = "bye";
-                break;
-            default:
-                result = "La peticion no se puede resolver.";
-                break;
-        }*/
-        return "Conexion y procesamiento realizado con exito";
+        if (Character.isDigit(c)) {
+            return String.join("", Collections.nCopies(Character.digit(c, 10), compressedText.substring(1, 2))) + decompress(compressedText.substring(2));
+        }
+
+        return compressedText.charAt(0) + decompress(compressedText.substring(1));
     }
-
 }

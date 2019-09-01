@@ -2,10 +2,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 
 /**
  *
@@ -40,10 +43,10 @@ public class Server {
                 String request = input.readLine();
                 //System.out.println("Cliente> petición [" + request +  "]");
                 //se procesa la peticion y se espera resultado
+                System.out.println("Servidor> se recibio la cadena comprimida: "+ request);
                 String strOutput = decompress(request);
                 //Se imprime en consola "servidor"
-                System.out.println("Servidor> Resultado de petición");
-                System.out.println("Servidor> \"" + strOutput + "\"");
+                System.out.println("Servidor> se descomprimio la cadena a: "+ strOutput);
                 //se imprime en cliente
                 output.flush();//vacia contenido
                 output.println(strOutput);
@@ -60,13 +63,10 @@ public class Server {
         if (compressedText.length() <= 1) {
             return compressedText;
         }
-
         char c = compressedText.charAt(0);
-
         if (Character.isDigit(c)) {
             return String.join("", Collections.nCopies(Character.digit(c, 10), compressedText.substring(1, 2))) + decompress(compressedText.substring(2));
         }
-
         return compressedText.charAt(0) + decompress(compressedText.substring(1));
     }
 }
